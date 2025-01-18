@@ -3,51 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equation Solver</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Drag and Drop Equations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .equation {
+            margin: 20px 0;
+        }
+        .boxes {
+            display: inline-flex;
+            gap: 10px;
+        }
+        .draggable {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+        }
+        .droppable {
+            width: 40px;
+            height: 40px;
+            border: 2px dashed gray;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
-    <h1>2x + 1 = 9</h1>
-    <div class="game-container">
-        <div class="droppable-area">
-            <!-- First row of droppable boxes (2x + 1, 9) -->
-            <div class="droppable-row">
-                <div class="droppable" data-answer="-"></div>
-                <div class="droppable" data-answer="1"></div>
-            </div>
-            <div class="droppable-row">
-                <div class="droppable" data-answer="-"></div>
-                <div class="droppable" data-answer="1"></div>
-            </div>
+    <div class="equation">
+        <p>2x + 1 = 9</p>
+        <div class="boxes">
+            <div class="droppable" id="box1"></div>
+            <div class="droppable" id="box2"></div>
         </div>
-
-        <!-- Draggable options on the far right -->
-        <div class="draggable-options">
-            <div class="column">
-                <div class="draggable" data-value="+">+</div>
-                <div class="draggable" data-value="-">-</div>
-                <div class="draggable" data-value="x">x</div>
-                <div class="draggable" data-value="÷">÷</div>
-            </div>
-            <div class="column">
-                <div class="draggable" data-value="1">1</div>
-                <div class="draggable" data-value="2">2</div>
-                <div class="draggable" data-value="3">3</div>
-                <div class="draggable" data-value="4">4</div>
-                <div class="draggable" data-value="5">5</div>
-            </div>
-            <div class="column">
-                <div class="draggable" data-value="6">6</div>
-                <div class="draggable" data-value="7">7</div>
-                <div class="draggable" data-value="8">8</div>
-                <div class="draggable" data-value="9">9</div>
-                <div class="draggable" data-value="10">10</div>
-            </div>
-        </div>
+        <p class="hidden" id="correct1">correct</p>
     </div>
-    <div id="feedback"></div>
-    <script src="points.js"></script>
-    <script src="script.js"></script>
+
+    <div class="equation hidden" id="equation2">
+        <p>2x = 8</p>
+        <div class="boxes">
+            <div class="droppable" id="box3"></div>
+            <div class="droppable" id="box4"></div>
+        </div>
+        <p class="hidden" id="correct2">correct</p>
+    </div>
+
+    <div class="equation hidden" id="equation3">
+        <p>x = 4</p>
+        <p class="hidden" id="correct3">correct</p>
+    </div>
+
+    <div class="draggables">
+        <div class="draggable" draggable="true" data-value="+">+</div>
+        <div class="draggable" draggable="true" data-value="-">-</div>
+        <div class="draggable" draggable="true" data-value="x">x</div>
+        <div class="draggable" draggable="true" data-value="÷">÷</div>
+        <div class="draggable" draggable="true" data-value="1">1</div>
+        <div class="draggable" draggable="true" data-value="2">2</div>
+        <div class="draggable" draggable="true" data-value="3">3</div>
+        <div class="draggable" draggable="true" data-value="4">4</div>
+        <div class="draggable" draggable="true" data-value="5">5</div>
+        <div class="draggable" draggable="true" data-value="6">6</div>
+        <div class="draggable" draggable="true" data-value="7">7</div>
+        <div class="draggable" draggable="true" data-value="8">8</div>
+        <div class="draggable" draggable="true" data-value="9">9</div>
+        <div class="draggable" draggable="true" data-value="10">10</div>
+    </div>
+
+    <script>
+        const droppables = document.querySelectorAll(".droppable");
+        const draggables = document.querySelectorAll(".draggable");
+        
+        const correctAnswers = {
+            box1: "-",
+            box2: "1",
+            box3: "÷",
+            box4: "2"
+        };
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener("dragstart", event => {
+                event.dataTransfer.setData("text", event.target.dataset.value);
+            });
+        });
+
+        droppables.forEach(droppable => {
+            droppable.addEventListener("dragover", event => {
+                event.preventDefault();
+            });
+
+            droppable.addEventListener("drop", event => {
+                event.preventDefault();
+                const value = event.dataTransfer.getData("text");
+                const id = event.target.id;
+
+                if (correctAnswers[id] === value) {
+                    event.target.textContent = value;
+
+                    // Check if first equation is correct
+                    if (id === "box1" || id === "box2") {
+                        const box1 = document.getElementById("box1").textContent;
+                        const box2 = document.getElementById("box2").textContent;
+
+                        if (box1 === "-" && box2 === "1") {
+                            document.getElementById("correct1").classList.remove("hidden");
+                            document.getElementById("equation2").classList.remove("hidden");
+
+                            document.getElementById("box3").textContent = "÷";
+                            document.getElementById("box4").textContent = "2";
+                        }
+                    }
+
+                    // Check if second equation is correct
+                    if (id === "box3" || id === "box4") {
+                        const box3 = document.getElementById("box3").textContent;
+                        const box4 = document.getElementById("box4").textContent;
+
+                        if (box3 === "÷" && box4 === "2") {
+                            document.getElementById("correct2").classList.remove("hidden");
+                            document.getElementById("equation3").classList.remove("hidden");
+                            document.getElementById("correct3").classList.remove("hidden");
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -56,7 +56,6 @@ function setupPhase2() {
             <div class="droppable" data-answer="÷"></div>
             <div class="droppable" data-answer="2"></div>
         </div>
-        <p class="equals">=</p>
         <div class="droppable-row">
             <div class="droppable" data-answer="÷"></div>
             <div class="droppable" data-answer="2"></div>

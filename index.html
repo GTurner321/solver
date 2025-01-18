@@ -24,6 +24,7 @@
             align-items: center;
             justify-content: center;
             cursor: grab;
+            margin: 5px;
         }
         .droppable {
             width: 40px;
@@ -36,6 +37,12 @@
         .hidden {
             visibility: hidden;
         }
+        .draggables {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            gap: 10px;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -45,6 +52,10 @@
             <div class="droppable" id="box1"></div>
             <div class="droppable" id="box2"></div>
         </div>
+        <div class="boxes">
+            <div class="droppable" id="box1-copy"></div>
+            <div class="droppable" id="box2-copy"></div>
+        </div>
         <p class="hidden" id="correct1">correct</p>
     </div>
 
@@ -53,6 +64,10 @@
         <div class="boxes">
             <div class="droppable" id="box3"></div>
             <div class="droppable" id="box4"></div>
+        </div>
+        <div class="boxes">
+            <div class="droppable" id="box3-copy"></div>
+            <div class="droppable" id="box4-copy"></div>
         </div>
         <p class="hidden" id="correct2">correct</p>
     </div>
@@ -67,11 +82,13 @@
         <div class="draggable" draggable="true" data-value="-">-</div>
         <div class="draggable" draggable="true" data-value="x">x</div>
         <div class="draggable" draggable="true" data-value="÷">÷</div>
+
         <div class="draggable" draggable="true" data-value="1">1</div>
         <div class="draggable" draggable="true" data-value="2">2</div>
         <div class="draggable" draggable="true" data-value="3">3</div>
         <div class="draggable" draggable="true" data-value="4">4</div>
         <div class="draggable" draggable="true" data-value="5">5</div>
+
         <div class="draggable" draggable="true" data-value="6">6</div>
         <div class="draggable" draggable="true" data-value="7">7</div>
         <div class="draggable" draggable="true" data-value="8">8</div>
@@ -109,26 +126,26 @@
                 if (correctAnswers[id] === value) {
                     event.target.textContent = value;
 
-                    // Check if first equation is correct
+                    // Sync pairs of boxes
                     if (id === "box1" || id === "box2") {
-                        const box1 = document.getElementById("box1").textContent;
-                        const box2 = document.getElementById("box2").textContent;
+                        document.getElementById("box1").textContent = "-";
+                        document.getElementById("box2").textContent = "1";
+                        document.getElementById("box1-copy").textContent = "-";
+                        document.getElementById("box2-copy").textContent = "1";
 
-                        if (box1 === "-" && box2 === "1") {
+                        if (document.getElementById("box1").textContent === "-" && document.getElementById("box2").textContent === "1") {
                             document.getElementById("correct1").classList.remove("hidden");
                             document.getElementById("equation2").classList.remove("hidden");
-
-                            document.getElementById("box3").textContent = "÷";
-                            document.getElementById("box4").textContent = "2";
                         }
                     }
 
-                    // Check if second equation is correct
                     if (id === "box3" || id === "box4") {
-                        const box3 = document.getElementById("box3").textContent;
-                        const box4 = document.getElementById("box4").textContent;
+                        document.getElementById("box3").textContent = "÷";
+                        document.getElementById("box4").textContent = "2";
+                        document.getElementById("box3-copy").textContent = "÷";
+                        document.getElementById("box4-copy").textContent = "2";
 
-                        if (box3 === "÷" && box4 === "2") {
+                        if (document.getElementById("box3").textContent === "÷" && document.getElementById("box4").textContent === "2") {
                             document.getElementById("correct2").classList.remove("hidden");
                             document.getElementById("equation3").classList.remove("hidden");
                             document.getElementById("correct3").classList.remove("hidden");

@@ -7,17 +7,46 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="score">Score: 0</div>
     <h1>2x + 1 = 9</h1>
-    <div class="container">
-        <!-- Droppable and Draggable Elements -->
-        <div id="game"></div>
-    </div>
-    <div id="points">Points: 0</div>
+    <div class="game-container">
+        <div class="droppable-area">
+            <div class="droppable-row">
+                <div class="droppable" data-answer="-"></div>
+                <div class="droppable" data-answer="1"></div>
+            </div>
+            <p class="equals">=</p>
+            <div class="droppable-row">
+                <div class="droppable" data-answer="-"></div>
+                <div class="droppable" data-answer="1"></div>
+            </div>
+        </div>
 
+        <div class="draggable-options">
+            <div class="column">
+                <div class="draggable" data-value="+">+</div>
+                <div class="draggable" data-value="-">-</div>
+                <div class="draggable" data-value="x">x</div>
+                <div class="draggable" data-value="÷">÷</div>
+            </div>
+            <div class="column">
+                <div class="draggable" data-value="1">1</div>
+                <div class="draggable" data-value="2">2</div>
+                <div class="draggable" data-value="3">3</div>
+                <div class="draggable" data-value="4">4</div>
+                <div class="draggable" data-value="5">5</div>
+            </div>
+            <div class="column">
+                <div class="draggable" data-value="6">6</div>
+                <div class="draggable" data-value="7">7</div>
+                <div class="draggable" data-value="8">8</div>
+                <div class="draggable" data-value="9">9</div>
+                <div class="draggable" data-value="10">10</div>
+            </div>
+        </div>
+    </div>
+    <div id="feedback"></div>
+    <script src="points.js"></script>
     <script src="script.js"></script>
-    <script src="points.js"></script> <!-- Include Points Logic -->
 </body>
 </html>
-
-
-

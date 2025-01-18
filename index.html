@@ -25,6 +25,8 @@
             justify-content: center;
             cursor: grab;
             margin: 5px;
+            background-color: blue;
+            color: white;
         }
         .droppable {
             width: 40px;
@@ -41,7 +43,10 @@
             display: grid;
             grid-template-columns: repeat(3, auto);
             gap: 10px;
-            justify-content: center;
+            justify-content: end;
+            position: absolute;
+            right: 10px;
+            top: 50px;
         }
     </style>
 </head>
@@ -107,6 +112,13 @@
             box4: "2"
         };
 
+        const completed = {
+            box1: false,
+            box2: false,
+            box3: false,
+            box4: false
+        };
+
         draggables.forEach(draggable => {
             draggable.addEventListener("dragstart", event => {
                 event.dataTransfer.setData("text", event.target.dataset.value);
@@ -125,31 +137,22 @@
 
                 if (correctAnswers[id] === value) {
                     event.target.textContent = value;
+                    completed[id] = true;
 
-                    // Sync pairs of boxes
-                    if (id === "box1" || id === "box2") {
-                        document.getElementById("box1").textContent = "-";
-                        document.getElementById("box2").textContent = "1";
+                    // Check if both inputs in a pair are completed
+                    if (completed.box1 && completed.box2) {
                         document.getElementById("box1-copy").textContent = "-";
                         document.getElementById("box2-copy").textContent = "1";
-
-                        if (document.getElementById("box1").textContent === "-" && document.getElementById("box2").textContent === "1") {
-                            document.getElementById("correct1").classList.remove("hidden");
-                            document.getElementById("equation2").classList.remove("hidden");
-                        }
+                        document.getElementById("correct1").classList.remove("hidden");
+                        document.getElementById("equation2").classList.remove("hidden");
                     }
 
-                    if (id === "box3" || id === "box4") {
-                        document.getElementById("box3").textContent = "÷";
-                        document.getElementById("box4").textContent = "2";
+                    if (completed.box3 && completed.box4) {
                         document.getElementById("box3-copy").textContent = "÷";
                         document.getElementById("box4-copy").textContent = "2";
-
-                        if (document.getElementById("box3").textContent === "÷" && document.getElementById("box4").textContent === "2") {
-                            document.getElementById("correct2").classList.remove("hidden");
-                            document.getElementById("equation3").classList.remove("hidden");
-                            document.getElementById("correct3").classList.remove("hidden");
-                        }
+                        document.getElementById("correct2").classList.remove("hidden");
+                        document.getElementById("equation3").classList.remove("hidden");
+                        document.getElementById("correct3").classList.remove("hidden");
                     }
                 }
             });

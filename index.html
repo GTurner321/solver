@@ -46,9 +46,13 @@
 
         .options {
             display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
             flex-direction: column;
             align-items: center;
-            margin-left: 30px;
         }
 
         .draggable {
@@ -80,27 +84,30 @@
         <div class="droppable-container">
             <div class="droppable left" data-answer="-"></div>
             <div class="droppable right" data-answer="1"></div>
-            <span>+</span>
-            <div class="droppable left" data-answer="-"></div>
-            <div class="droppable right" data-answer="1"></div>
         </div>
 
         <!-- Draggable Options -->
         <div class="options">
-            <div class="draggable" draggable="true" data-value="+">+</div>
-            <div class="draggable" draggable="true" data-value="-">-</div>
-            <div class="draggable" draggable="true" data-value="x">x</div>
-            <div class="draggable" draggable="true" data-value="÷">÷</div>
-            <div class="draggable" draggable="true" data-value="1">1</div>
-            <div class="draggable" draggable="true" data-value="2">2</div>
-            <div class="draggable" draggable="true" data-value="3">3</div>
-            <div class="draggable" draggable="true" data-value="4">4</div>
-            <div class="draggable" draggable="true" data-value="5">5</div>
-            <div class="draggable" draggable="true" data-value="6">6</div>
-            <div class="draggable" draggable="true" data-value="7">7</div>
-            <div class="draggable" draggable="true" data-value="8">8</div>
-            <div class="draggable" draggable="true" data-value="9">9</div>
-            <div class="draggable" draggable="true" data-value="10">10</div>
+            <div class="column">
+                <div class="draggable" draggable="true" data-value="+">+</div>
+                <div class="draggable" draggable="true" data-value="-">-</div>
+                <div class="draggable" draggable="true" data-value="x">x</div>
+                <div class="draggable" draggable="true" data-value="÷">÷</div>
+            </div>
+            <div class="column">
+                <div class="draggable" draggable="true" data-value="1">1</div>
+                <div class="draggable" draggable="true" data-value="2">2</div>
+                <div class="draggable" draggable="true" data-value="3">3</div>
+                <div class="draggable" draggable="true" data-value="4">4</div>
+                <div class="draggable" draggable="true" data-value="5">5</div>
+            </div>
+            <div class="column">
+                <div class="draggable" draggable="true" data-value="6">6</div>
+                <div class="draggable" draggable="true" data-value="7">7</div>
+                <div class="draggable" draggable="true" data-value="8">8</div>
+                <div class="draggable" draggable="true" data-value="9">9</div>
+                <div class="draggable" draggable="true" data-value="10">10</div>
+            </div>
         </div>
     </div>
     <div id="feedback" class="feedback"></div>
@@ -108,9 +115,6 @@
         <h1>2x = 8</h1>
         <div class="container">
             <div class="droppable-container">
-                <div class="droppable left" data-answer="÷"></div>
-                <div class="droppable right" data-answer="2"></div>
-                <span>=</span>
                 <div class="droppable left" data-answer="÷"></div>
                 <div class="droppable right" data-answer="2"></div>
             </div>
@@ -154,8 +158,13 @@
 
                     // Check if all boxes are completed for this step
                     const allFilled = Array.from(droppables).every(d => d.textContent);
-                    if (allFilled && nextStep.style.display === 'none') nextStep.style.display = 'block';
-                    else if (allFilled && nextStep.style.display === 'block') finalStep.style.display = 'block';
+                    if (allFilled && nextStep.style.display === 'none') {
+                        nextStep.style.display = 'block';
+                        feedback.textContent = '';
+                    } else if (allFilled && nextStep.style.display === 'block') {
+                        finalStep.style.display = 'block';
+                        feedback.textContent = '';
+                    }
                 } else {
                     feedback.textContent = 'Try again!';
                     feedback.classList.remove('success');
@@ -166,4 +175,5 @@
     </script>
 </body>
 </html>
+
 

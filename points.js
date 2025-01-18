@@ -1,26 +1,9 @@
-// Game logic for drag-and-drop
-const draggables = document.querySelectorAll('.draggable');
-const droppables = document.querySelectorAll('.droppable');
+let points = 0;
 
-draggables.forEach(draggable => {
-    draggable.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text', e.target.dataset.value);
-    });
-});
+// Function to update points
+function updatePoints(value) {
+    points += value;
+    document.getElementById('points').textContent = `Points: ${points}`;
+}
 
-droppables.forEach(droppable => {
-    droppable.addEventListener('dragover', (e) => e.preventDefault());
-
-    droppable.addEventListener('drop', (e) => {
-        const value = e.dataTransfer.getData('text');
-        const correctAnswer = droppable.dataset.answer;
-
-        if (value === correctAnswer) {
-            droppable.textContent = value;
-            updatePoints(10); // Call points update function
-        } else {
-            updatePoints(-5); // Deduct points for incorrect attempt
-        }
-    });
-});
 

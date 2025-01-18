@@ -3,24 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Equation Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            margin: 20px 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .droppable-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .droppable {
+            width: 60px;
+            height: 40px;
+            border: 2px dashed #aaa;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            background-color: white;
+            font-size: 1.2rem;
         }
-        h1 {
-            font-size: 3rem;
-            color: #333;
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 30px;
+        }
+
+        .draggable {
+            margin: 5px;
+            padding: 5px 10px;
+            border: 1px solid #aaa;
+            background-color: #e3e3e3;
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 1rem;
+            user-select: none;
+        }
+
+        .feedback {
+            font-size: 0.9rem;
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
         }
     </style>
 </head>
 <body>
-    <h1>Hello World!</h1>
+    <h1>2x + 1 = 9</h1>
+    <div class="container">
+        <!-- Droppable Area -->
+        <div class="droppable-container">
+            <div class="droppable left" data-answer="-"></div>
+            <div class="droppable right" data-answer="1"></div>
+            <span>+</span>
+            <div class="droppable left" data-answer="-"></div>
+            <div class="droppable right" data-answer="1"></div>
+        </div>
+
+        <!-- Draggable Options -->
+        <div class="options">
+            <div class="draggable" draggable="true" data-value="+">+</div>
+            <div class="draggable" draggable="true" data-value="-">-</div>
+            <div class="draggable" draggable="true" data-value="x">x</div>
+            <div class="draggable" draggable="true" data-value="÷">÷</div>
+            <div class="draggable" draggable="true" data-value="1">1</div>
+            <div class="draggable" draggable="true" data-value="2">2</div>
+            <div class="draggable" draggable="true" data-value="3">3</div>
+            <div class="draggable" draggable="true" data-value="4">4</div>
+            <div class="draggable" draggable="true" data-value="5">5</div>
+            <div class="draggable" draggable="true" data-value="6">6</div>
+            <div class="draggable" draggable="true" data-value="7">7</div>
+            <div class="draggable" draggable="true" data-value="8">8</div>
+            <div class="draggable" draggable="true" data-value="9">9</div>
+            <div class="draggable" draggable="true" data-value="10">10</div>
+        </div>
+    </div>
+    <div id="feedback" class="feedback"></div>
+    <div id="next-step" style="display: none;">
+        <h1>2x = 8</h1>
+        <div class="container">
+            <div class="droppable-container">
+                <div class="droppable left" data-answer="÷"></div>
+                <div class="droppable right" data-answer="2"></div>
+                <span>=</span>
+                <div class="droppable left" data-answer="÷"></div>
+                <div class="droppable right" data-answer="2"></div>
+            </div>
+        </div>
+    </div>
+    <div id="final-step" style="display: none;">
+        <h1>x = 4</h1>
+        <h2>Congratulations! You have solved this equation.</h2>
+    </div>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable');
+        const droppables = document.querySelectorAll('.droppable');
+        const feedback = document.getElementById('feedback');
+        const nextStep = document.getElementById('next-step');
+        const finalStep = document.getElementById('final-step');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text', e.target.dataset.value);
+            });
+        });
+
+        droppables.forEach(droppable => {
+            droppable.addEventListener('dragover', (e) => e.preventDefault());
+
+            droppable.addEventListener('drop', (e) => {
+                const value = e.dataTransfer.getData('text');
+                const correctAnswer = droppable.dataset.answer;
+
+                if (value === correctAnswer) {
+                    droppable.textContent = value;
+                    feedback.textContent = 'Correct!';
+                    feedback.classList.add('success');
+                    feedback.classList.remove('error');
+                    droppable.classList.add('locked');
+
+                    // Auto-populate other boxes if the correct answer is chosen
+                    const relatedBoxes = Array.from(droppables).filter(d => d.dataset.answer === correctAnswer && !d.textContent);
+                    relatedBoxes.forEach(box => (box.textContent = value));
+
+                    // Check if all boxes are completed for this step
+                    const allFilled = Array.from(droppables).every(d => d.textContent);
+                    if (allFilled && nextStep.style.display === 'none') nextStep.style.display = 'block';
+                    else if (allFilled && nextStep.style.display === 'block') finalStep.style.display = 'block';
+                } else {
+                    feedback.textContent = 'Try again!';
+                    feedback.classList.remove('success');
+                    feedback.classList.add('error');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+

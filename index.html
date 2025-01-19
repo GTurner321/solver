@@ -3,57 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equation Solver</title>
+    <title>Interactive Equation Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
         }
 
         .equation {
             font-size: 24px;
             margin: 20px 0;
+            text-align: center;
         }
 
-        .boxes {
+        .box-row {
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .box-space {
+            width: 50px;
+            height: 50px;
         }
 
         .box {
             width: 50px;
             height: 50px;
-            border: 1px solid black;
-            margin: 0 5px;
+            border: 2px solid black;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 20px;
-        }
-
-        .spacer {
-            width: 50px; /* Match the size of the box */
-        }
-
-        .draggable {
-            background-color: blue;
-            color: white;
-            width: 50px;
-            height: 50px;
-            margin: 5px;
-            display: inline-flex;
             justify-content: center;
-            align-items: center;
-            cursor: grab;
-        }
-
-        .hidden {
-            visibility: hidden;
+            margin: 0 5px;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .feedback {
-            font-size: 18px;
+            font-size: 16px;
+            margin-top: 10px;
         }
 
         .correct {
@@ -64,144 +67,142 @@
             color: red;
         }
 
-        .draggable-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .draggable-column {
+        .draggables {
             display: flex;
             flex-direction: column;
+            position: absolute;
+            right: 20px;
+            top: 50px;
+        }
+
+        .draggable {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            color: white;
+            display: flex;
             align-items: center;
+            justify-content: center;
+            margin: 5px;
+            cursor: grab;
+        }
+
+        .hidden {
+            visibility: hidden;
         }
     </style>
 </head>
 <body>
+    <div class="score">Score = 0</div>
 
     <div class="equation">2x + 1 = 9</div>
-    <div class="boxes">
-        <div class="box" data-box="minus"></div>
-        <div class="box" data-box="one"></div>
-        <div class="spacer"></div>
-        <div class="box" data-box="minus"></div>
-        <div class="box" data-box="one"></div>
+    <div class="box-row">
+        <div class="box" data-answer="-"></div>
+        <div class="box" data-answer="1"></div>
+        <div class="box-space"></div>
+        <div class="box" data-answer="-"></div>
+        <div class="box" data-answer="1"></div>
     </div>
-    <div class="feedback hidden" id="feedback-1"></div>
+    <div class="feedback hidden" id="feedback-row-1"></div>
 
     <div class="equation hidden" id="equation-2">2x = 8</div>
-    <div class="boxes hidden" id="boxes-2">
-        <div class="box" data-box="divide"></div>
-        <div class="box" data-box="two"></div>
-        <div class="spacer"></div>
-        <div class="box" data-box="divide"></div>
-        <div class="box" data-box="two"></div>
+    <div class="box-row hidden" id="row-2">
+        <div class="box" data-answer="÷"></div>
+        <div class="box" data-answer="2"></div>
+        <div class="box-space"></div>
+        <div class="box" data-answer="÷"></div>
+        <div class="box" data-answer="2"></div>
     </div>
-    <div class="feedback hidden" id="feedback-2"></div>
+    <div class="feedback hidden" id="feedback-row-2"></div>
 
     <div class="equation hidden" id="equation-3">x = 4</div>
     <div class="feedback hidden" id="final-feedback">Well done! You have solved the equation.</div>
 
-    <div class="draggable-container">
-        <div class="draggable-column">
-            <div class="draggable" draggable="true" data-value="-">-</div>
-            <div class="draggable" draggable="true" data-value="+">+</div>
-            <div class="draggable" draggable="true" data-value="x">x</div>
-            <div class="draggable" draggable="true" data-value="\u00F7">&divide;</div>
-        </div>
-        <div class="draggable-column">
-            <div class="draggable" draggable="true" data-value="1">1</div>
-            <div class="draggable" draggable="true" data-value="2">2</div>
-            <div class="draggable" draggable="true" data-value="3">3</div>
-            <div class="draggable" draggable="true" data-value="4">4</div>
-            <div class="draggable" draggable="true" data-value="5">5</div>
-        </div>
-        <div class="draggable-column">
-            <div class="draggable" draggable="true" data-value="6">6</div>
-            <div class="draggable" draggable="true" data-value="7">7</div>
-            <div class="draggable" draggable="true" data-value="8">8</div>
-            <div class="draggable" draggable="true" data-value="9">9</div>
-            <div class="draggable" draggable="true" data-value="10">10</div>
-        </div>
+    <div class="draggables">
+        <div class="draggable" draggable="true">-</div>
+        <div class="draggable" draggable="true">+</div>
+        <div class="draggable" draggable="true">x</div>
+        <div class="draggable" draggable="true">÷</div>
+        <div class="draggable" draggable="true">1</div>
+        <div class="draggable" draggable="true">2</div>
+        <div class="draggable" draggable="true">3</div>
+        <div class="draggable" draggable="true">4</div>
+        <div class="draggable" draggable="true">5</div>
     </div>
 
     <script>
+        let score = 0;
+
         const draggables = document.querySelectorAll('.draggable');
         const boxes = document.querySelectorAll('.box');
-        const feedback1 = document.getElementById('feedback-1');
-        const feedback2 = document.getElementById('feedback-2');
+        const feedbackRow1 = document.getElementById('feedback-row-1');
+        const feedbackRow2 = document.getElementById('feedback-row-2');
         const equation2 = document.getElementById('equation-2');
+        const row2 = document.getElementById('row-2');
         const equation3 = document.getElementById('equation-3');
-        const boxes2 = document.getElementById('boxes-2');
         const finalFeedback = document.getElementById('final-feedback');
+        const scoreDisplay = document.querySelector('.score');
 
-        let firstRowCorrect = { minus: false, one: false };
-        let secondRowCorrect = { divide: false, two: false };
+        let filledBoxesRow1 = { left: false, right: false };
+        let filledBoxesRow2 = { left: false, right: false };
 
         draggables.forEach(draggable => {
-            draggable.addEventListener('dragstart', () => {
-                draggable.classList.add('dragging');
-            });
-
-            draggable.addEventListener('dragend', () => {
-                draggable.classList.remove('dragging');
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text', e.target.textContent);
             });
         });
 
-        boxes.forEach(box => {
-            box.addEventListener('dragover', e => {
+        boxes.forEach((box, index) => {
+            box.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                const dragging = document.querySelector('.dragging');
-                const value = dragging.dataset.value;
-                const boxType = box.dataset.box;
+            });
 
-                if ((boxType === 'minus' && value === '-') || (boxType === 'one' && value === '1')) {
-                    box.textContent = value;
-                    box.classList.add('filled');
-                    firstRowCorrect[boxType] = true;
+            box.addEventListener('drop', (e) => {
+                const answer = e.dataTransfer.getData('text');
+                const expectedAnswer = box.getAttribute('data-answer');
+                const isLeftBox = index % 2 === 0;
+                const pairIndex = isLeftBox ? index + 2 : index - 2;
 
-                    // Automatically fill other boxes in the row
-                    if (boxType === 'minus') {
-                        document.querySelectorAll('[data-box="minus"]').forEach(b => b.textContent = '-');
-                    } else if (boxType === 'one') {
-                        document.querySelectorAll('[data-box="one"]').forEach(b => b.textContent = '1');
-                    }
+                if (answer === expectedAnswer) {
+                    box.textContent = answer;
+                    boxes[pairIndex].textContent = answer;
 
-                    // Check if both conditions are met
-                    if (firstRowCorrect.minus && firstRowCorrect.one) {
-                        feedback1.textContent = 'Correct';
-                        feedback1.className = 'feedback correct';
-                        setTimeout(() => {
-                            equation2.classList.remove('hidden');
-                            boxes2.classList.remove('hidden');
-                        }, 1000);
-                    }
-                } else if ((boxType === 'divide' && value === '÷') || (boxType === 'two' && value === '2')) {
-                    box.textContent = value;
-                    box.classList.add('filled');
-                    secondRowCorrect[boxType] = true;
+                    if (index < 4) {
+                        if (isLeftBox) filledBoxesRow1.left = true;
+                        else filledBoxesRow1.right = true;
 
-                    // Automatically fill other boxes in the row
-                    if (boxType === 'divide') {
-                        document.querySelectorAll('[data-box="divide"]').forEach(b => b.textContent = '÷');
-                    } else if (boxType === 'two') {
-                        document.querySelectorAll('[data-box="two"]').forEach(b => b.textContent = '2');
-                    }
+                        if (filledBoxesRow1.left && filledBoxesRow1.right) {
+                            feedbackRow1.textContent = 'Correct';
+                            feedbackRow1.classList.add('correct');
+                            feedbackRow1.classList.remove('hidden');
+                            setTimeout(() => {
+                                equation2.classList.remove('hidden');
+                                row2.classList.remove('hidden');
+                                score += 5;
+                                scoreDisplay.textContent = `Score = ${score}`;
+                            }, 1000);
+                        }
+                    } else {
+                        if (isLeftBox) filledBoxesRow2.left = true;
+                        else filledBoxesRow2.right = true;
 
-                    // Check if both conditions are met
-                    if (secondRowCorrect.divide && secondRowCorrect.two) {
-                        feedback2.textContent = 'Correct';
-                        feedback2.className = 'feedback correct';
-                        setTimeout(() => {
-                            equation3.classList.remove('hidden');
-                            finalFeedback.classList.remove('hidden');
-                        }, 1000);
+                        if (filledBoxesRow2.left && filledBoxesRow2.right) {
+                            feedbackRow2.textContent = 'Correct';
+                            feedbackRow2.classList.add('correct');
+                            feedbackRow2.classList.remove('hidden');
+                            setTimeout(() => {
+                                equation3.classList.remove('hidden');
+                                finalFeedback.classList.remove('hidden');
+                                score += 5;
+                                scoreDisplay.textContent = `Score = ${score}`;
+                            }, 1000);
+                        }
                     }
                 } else {
-                    if (!box.classList.contains('filled')) {
-                        feedback1.textContent = 'Try again';
-                        feedback1.className = 'feedback try-again';
-                    }
+                    const feedback = index < 4 ? feedbackRow1 : feedbackRow2;
+                    feedback.textContent = 'Try again';
+                    feedback.classList.add('try-again');
+                    feedback.classList.remove('hidden');
                 }
             });
         });

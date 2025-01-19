@@ -3,175 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equation Solver</title>
+    <title>Interactive Equation Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 0;
-            padding: 0;
         }
 
         h1 {
+            font-size: 2em;
+        }
+
+        .score-container {
+            display: inline-block;
+            padding: 10px;
+            background-color: yellow;
+            border: 1px solid black;
             margin-bottom: 20px;
         }
 
         .equation {
-            font-size: 2em;
+            font-size: 1.5em;
             margin: 20px 0;
         }
 
-        .draggable-container {
+        .box-row {
             display: flex;
-            flex-direction: row;
-            justify-content: flex-end;
-            gap: 20px;
-            margin: 20px;
+            justify-content: center;
+            margin: 10px 0;
         }
 
-        .draggable-column {
+        .box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid black;
+            margin: 0 5px;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
+            font-size: 1.2em;
+        }
+
+        .box.space {
+            border: none;
+            background: none;
+        }
+
+        .box.blue {
+            background-color: lightblue;
+        }
+
+        .box.dark-blue {
+            background-color: deepskyblue;
         }
 
         .draggable {
             width: 50px;
             height: 50px;
+            border: 2px solid black;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: lightblue;
-            color: black;
-            font-size: 1.5em;
-            font-weight: bold;
-            border: 1px solid black;
+            margin: 5px;
+            font-size: 1.2em;
             cursor: grab;
         }
 
-        .draggable.number {
-            background-color: #4a90e2;
-        }
-
-        .drop-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .drop-space {
-            width: 50px;
-        }
-
-        .drop {
-            width: 50px;
-            height: 50px;
-            border: 2px dashed black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .drop.symbol {
+        .draggable.light-blue {
             background-color: lightblue;
         }
 
-        .drop.number {
-            background-color: #4a90e2;
+        .draggable.dark-blue {
+            background-color: deepskyblue;
+        }
+
+        .draggable-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .draggable-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .feedback {
             font-size: 1.2em;
-            margin-top: 10px;
+            margin: 10px 0;
         }
 
         .feedback.correct {
             color: green;
         }
 
-        .feedback.try-again {
+        .feedback.wrong {
             color: red;
         }
-
-        .score-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: yellow;
-            border: 2px solid black;
-            padding: 10px;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
     </style>
 </head>
 <body>
     <div class="score-container">Score = ?</div>
 
-    <h1>Equation Solver</h1>
-
     <div class="equation">2x + 1 = 9</div>
-
-    <div class="drop-row">
-        <div class="drop symbol" id="drop1"></div>
-        <div class="drop-space"></div>
-        <div class="drop number" id="drop2"></div>
-        <div class="drop-space"></div>
-        <div class="drop symbol" id="drop3"></div>
-        <div class="drop-space"></div>
-        <div class="drop number" id="drop4"></div>
+    <div class="box-row">
+        <div class="box blue" id="box1"></div>
+        <div class="box space"></div>
+        <div class="box dark-blue" id="box2"></div>
+        <div class="box space"></div>
+        <div class="box blue" id="box3"></div>
+        <div class="box space"></div>
+        <div class="box dark-blue" id="box4"></div>
     </div>
 
     <div class="feedback" id="feedback1"></div>
 
     <div class="equation" id="equation2" style="display: none;">2x = 8</div>
-
-    <div class="drop-row" style="display: none;" id="row2">
-        <div class="drop symbol" id="drop5"></div>
-        <div class="drop-space"></div>
-        <div class="drop number" id="drop6"></div>
-        <div class="drop-space"></div>
-        <div class="drop symbol" id="drop7"></div>
-        <div class="drop-space"></div>
-        <div class="drop number" id="drop8"></div>
+    <div class="box-row" id="row2" style="display: none;">
+        <div class="box blue" id="box5"></div>
+        <div class="box space"></div>
+        <div class="box dark-blue" id="box6"></div>
+        <div class="box space"></div>
+        <div class="box blue" id="box7"></div>
+        <div class="box space"></div>
+        <div class="box dark-blue" id="box8"></div>
     </div>
 
     <div class="feedback" id="feedback2" style="display: none;"></div>
 
     <div class="equation" id="equation3" style="display: none;">x = 4</div>
-    <div class="feedback" id="finalFeedback" style="display: none;"></div>
+    <div class="feedback" id="finalFeedback" style="display: none; color: green;">Well done! You have solved the equation.</div>
 
     <div class="draggable-container">
         <div class="draggable-column">
-            <div class="draggable" draggable="true" id="minus">-</div>
-            <div class="draggable" draggable="true" id="plus">+</div>
-            <div class="draggable" draggable="true" id="times">x</div>
-            <div class="draggable" draggable="true" id="divide">÷</div>
+            <div class="draggable light-blue" draggable="true" id="minus">-</div>
+            <div class="draggable light-blue" draggable="true" id="plus">+</div>
+            <div class="draggable light-blue" draggable="true" id="times">x</div>
+            <div class="draggable light-blue" draggable="true" id="divide">÷</div>
         </div>
         <div class="draggable-column">
-            <div class="draggable number" draggable="true" id="one">1</div>
-            <div class="draggable number" draggable="true" id="two">2</div>
-            <div class="draggable number" draggable="true" id="three">3</div>
-            <div class="draggable number" draggable="true" id="four">4</div>
-            <div class="draggable number" draggable="true" id="five">5</div>
+            <div class="draggable dark-blue" draggable="true" id="num1">1</div>
+            <div class="draggable dark-blue" draggable="true" id="num2">2</div>
+            <div class="draggable dark-blue" draggable="true" id="num3">3</div>
+            <div class="draggable dark-blue" draggable="true" id="num4">4</div>
+            <div class="draggable dark-blue" draggable="true" id="num5">5</div>
         </div>
         <div class="draggable-column">
-            <div class="draggable number" draggable="true" id="six">6</div>
-            <div class="draggable number" draggable="true" id="seven">7</div>
-            <div class="draggable number" draggable="true" id="eight">8</div>
-            <div class="draggable number" draggable="true" id="nine">9</div>
-            <div class="draggable number" draggable="true" id="ten">10</div>
+            <div class="draggable dark-blue" draggable="true" id="num6">6</div>
+            <div class="draggable dark-blue" draggable="true" id="num7">7</div>
+            <div class="draggable dark-blue" draggable="true" id="num8">8</div>
+            <div class="draggable dark-blue" draggable="true" id="num9">9</div>
+            <div class="draggable dark-blue" draggable="true" id="num10">10</div>
         </div>
     </div>
 
     <script>
-        // JavaScript code remains unchanged for now
+        const draggables = document.querySelectorAll('.draggable');
+        const boxes = document.querySelectorAll('.box');
+        let score = 0;
+
+        draggables.forEach(item => {
+            item.addEventListener('dragstart', event => {
+                event.dataTransfer.setData('text', event.target.id);
+            });
+        });
+
+        boxes.forEach(box => {
+            box.addEventListener('dragover', event => {
+                event.preventDefault();
+            });
+
+            box.addEventListener('drop', event => {
+                event.preventDefault();
+                const data = event.dataTransfer.getData('text');
+                const draggedElement = document.getElementById(data);
+
+                if (validateDrop(box.id, draggedElement.id)) {
+                    box.textContent = draggedElement.textContent;
+                    box.classList.add('filled');
+                    checkRowCompletion();
+                } else {
+                    document.getElementById(`feedback${getRow(box.id)}`).textContent = 'Try again';
+                    document.getElementById(`feedback${getRow(box.id)}`).className = 'feedback wrong';
+                }
+            });
+        });
+
+        function validateDrop(boxId, draggedId) {
+            const validPairs = {
+                box1: 'minus',
+                box2: 'num1',
+                box3: 'minus',
+                box4: 'num1',
+                box5: 'divide',
+                box6: 'num2',
+                box7: 'divide',
+                box8: 'num2'
+            };
+            return validPairs[boxId] === draggedId;
+        }
+
+        function checkRowCompletion() {
+            if (areBoxesFilled(['box1', 'box2', 'box3', 'box4'])) {
+                document.getElementById('feedback1').textContent = 'Correct';
+                document.getElementById('feedback1').className = 'feedback correct';
+                score += 5;
+                updateScore();
+                revealNextRow();
+            }
+
+            if (areBoxesFilled(['box5', 'box6', 'box7', 'box8'])) {
+                document.getElementById('feedback2').textContent = 'Correct';
+                document.getElementById('feedback2').className = 'feedback correct';
+                score += 5;
+                updateScore();
+                revealFinalFeedback();
+            }
+        }
+
+        function areBoxesFilled(ids) {
+            return ids.every(id => document.getElementById(id).textContent !== '');
+        }
+
+        function updateScore() {
+            document.querySelector('.score-container').textContent = `Score = ${score}`;
+        }
+
+        function revealNextRow() {
+            document.getElementById('equation2').style.display = 'block';
+            document.getElementById('row2').style.display = 'flex';
+        }
+
+        function revealFinalFeedback() {
+            document.getElementById('equation3').style.display = 'block';
+            document.getElementById('finalFeedback').style.display = 'block';
+        }
+
+        function getRow(boxId) {
+            return boxId.startsWith('box1') || boxId.startsWith('box2') ? 1 : 2;
+        }
     </script>
 </body>
 </html>

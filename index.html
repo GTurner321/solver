@@ -10,16 +10,21 @@
             text-align: center;
         }
         .equation {
-            margin: 20px 0;
-            font-size: 24px;
+            margin: 40px 0;
+            font-size: 36px;
             font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .equation p {
-            font-size: 32px;
+            margin: 0 10px;
+            font-size: 48px;
         }
         .boxes {
             display: inline-flex;
             gap: 10px;
+            margin-top: 20px;
         }
         .draggable {
             width: 40px;
@@ -45,7 +50,7 @@
             visibility: hidden;
         }
         .feedback {
-            font-size: 18px;
+            font-size: 16px;
             margin-top: 10px;
         }
         .correct {
@@ -53,6 +58,11 @@
         }
         .incorrect {
             color: red;
+        }
+        .final-feedback {
+            font-size: 20px;
+            margin-top: 20px;
+            color: green;
         }
         .draggables {
             display: grid;
@@ -63,39 +73,50 @@
             right: 10px;
             top: 50px;
         }
+        .space {
+            height: 40px;
+        }
     </style>
 </head>
 <body>
     <div class="equation">
-        <p>2x + 1 = 9</p>
-        <div class="boxes">
-            <div class="droppable" id="box1"></div>
-            <div class="droppable" id="box2"></div>
-        </div>
-        <div class="boxes">
-            <div class="droppable" id="box1-copy"></div>
-            <div class="droppable" id="box2-copy"></div>
-        </div>
-        <p class="hidden feedback" id="feedback1"></p>
+        <p>2x + 1</p>
+        <p>=</p>
+        <p>9</p>
     </div>
+    <div class="boxes">
+        <div class="droppable" id="box1"></div>
+        <div class="droppable" id="box2"></div>
+    </div>
+    <div class="space"></div>
+    <div class="boxes">
+        <div class="droppable" id="box1-copy"></div>
+        <div class="droppable" id="box2-copy"></div>
+    </div>
+    <p class="hidden feedback" id="feedback1"></p>
 
     <div class="equation hidden" id="equation2">
-        <p>2x = 8</p>
-        <div class="boxes">
-            <div class="droppable" id="box3"></div>
-            <div class="droppable" id="box4"></div>
-        </div>
-        <div class="boxes">
-            <div class="droppable" id="box3-copy"></div>
-            <div class="droppable" id="box4-copy"></div>
-        </div>
-        <p class="hidden feedback" id="feedback2"></p>
+        <p>2x</p>
+        <p>=</p>
+        <p>8</p>
     </div>
+    <div class="boxes">
+        <div class="droppable" id="box3"></div>
+        <div class="droppable" id="box4"></div>
+    </div>
+    <div class="space"></div>
+    <div class="boxes">
+        <div class="droppable" id="box3-copy"></div>
+        <div class="droppable" id="box4-copy"></div>
+    </div>
+    <p class="hidden feedback" id="feedback2"></p>
 
     <div class="equation hidden" id="equation3">
-        <p>x = 4</p>
-        <p class="hidden feedback" id="feedback3"></p>
+        <p>x</p>
+        <p>=</p>
+        <p>4</p>
     </div>
+    <p class="hidden final-feedback" id="feedback3">Well done! You have solved the equation.</p>
 
     <div class="draggables">
         <div class="draggable" draggable="true" data-value="+">+</div>
@@ -157,30 +178,41 @@
                 const value = event.dataTransfer.getData("text");
                 const id = event.target.id;
 
-                const isPrimaryBox = id === "box1" || id === "box3";
-                const isSecondaryBox = id === "box2" || id === "box4";
-                const copyBoxId = isPrimaryBox ? id.replace("1", "1-copy").replace("3", "3-copy") : id.replace("2", "2-copy").replace("4", "4-copy");
+                const isPrimaryBox = id === "box1" || id === "box1-copy" || id === "box3" || id === "box3-copy";
+                const isSecondaryBox = id === "box2" || id === "box2-copy" || id === "box4" || id === "box4-copy";
+                const primaryPair = ["box1", "box1-copy"];
+                const secondaryPair = ["box2", "box2-copy"];
+                const primaryPair2 = ["box3", "box3-copy"];
+                const secondaryPair2 = ["box4", "box4-copy"];
 
-                if (correctAnswers[id] === value) {
-                    event.target.textContent = value;
-                    document.getElementById(copyBoxId).textContent = value;
-                    completed[id] = true;
-                    feedbackElements[id].textContent = "correct";
-                    feedbackElements[id].classList.add("correct");
-                    feedbackElements[id].classList.remove("hidden");
+                if (correctAnswers[id] === value || (isPrimaryBox && correctAnswers[primaryPair[0]] === value) || (isPrimaryBox && correctAnswers[primaryPair2[0]] === value)) {
+                    const pair = isPrimaryBox ? (id.includes("box3") ? primaryPair2 : primaryPair) : (id.includes("box4") ? secondaryPair2 : secondaryPair);
 
-                    setTimeout(() => {
-                        if (completed.box1 && completed.box2) {
+                    pair.forEach(boxId => {
+                        document.getElementById(boxId).textContent = value;
+                        completed[boxId] = true;
+                    });
+                
+                    if (Object.values(completed).slice(0, 2).every(Boolean)) {
+                        feedbackElements["box1"].textContent = "correct";
+                        feedbackElements["box1"].classList.add("correct");
+                        feedbackElements["box1"].classList.remove("hidden");
+
+                        setTimeout(() => {
                             document.getElementById("equation2").classList.remove("hidden");
-                        }
+                        }, 1000);
+                    }
 
-                        if (completed.box3 && completed.box4) {
+                    if (Object.values(completed).slice(2).every(Boolean)) {
+                        feedbackElements["box3"].textContent = "correct";
+                        feedbackElements["box3"].classList.add("correct");
+                        feedbackElements["box3"].classList.remove("hidden");
+
+                        setTimeout(() => {
                             document.getElementById("equation3").classList.remove("hidden");
-                            document.getElementById("feedback3").textContent = "correct";
-                            document.getElementById("feedback3").classList.add("correct");
                             document.getElementById("feedback3").classList.remove("hidden");
-                        }
-                    }, 1000);
+                        }, 1000);
+                    }
                 } else {
                     feedbackElements[id].textContent = "try again";
                     feedbackElements[id].classList.add("incorrect");

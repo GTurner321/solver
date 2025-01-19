@@ -3,92 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Equation Solver</title>
+    <title>Equation Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
+            flex-direction: column;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            height: 100vh;
+            background-color: #f4f4f4;
         }
 
         .score {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 20px;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .equation {
-            font-size: 24px;
-            margin: 20px 0;
+            font-size: 32px;
+            font-weight: bold;
             text-align: center;
+            margin: 20px 0;
         }
 
-        .box-row {
+        .box-container {
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 20px;
-        }
-
-        .box-space {
-            width: 50px;
-            height: 50px;
         }
 
         .box {
             width: 50px;
             height: 50px;
-            border: 2px solid black;
             display: flex;
-            align-items: center;
             justify-content: center;
-            margin: 0 5px;
-            font-size: 18px;
+            align-items: center;
+            border: 2px solid black;
+            font-size: 20px;
             font-weight: bold;
+            background-color: white;
+        }
+
+        .box.light-blue {
+            background-color: lightblue;
+        }
+
+        .box.blue {
+            background-color: #add8e6;
         }
 
         .feedback {
             font-size: 16px;
+            font-weight: bold;
             margin-top: 10px;
         }
 
-        .correct {
+        .feedback.correct {
             color: green;
         }
 
-        .try-again {
+        .feedback.wrong {
             color: red;
         }
 
-        .draggables {
+        .draggable-container {
             display: flex;
             flex-direction: column;
             position: absolute;
-            right: 20px;
-            top: 50px;
+            right: 50px;
+            gap: 10px;
+        }
+
+        .draggable-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .draggable {
             width: 50px;
             height: 50px;
-            background-color: blue;
-            color: white;
             display: flex;
-            align-items: center;
             justify-content: center;
-            margin: 5px;
-            cursor: grab;
+            align-items: center;
+            border: 2px solid black;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #add8e6;
+            cursor: pointer;
         }
 
-        .hidden {
-            visibility: hidden;
+        .draggable.symbol {
+            background-color: lightblue;
         }
     </style>
 </head>
@@ -96,116 +109,116 @@
     <div class="score">Score = 0</div>
 
     <div class="equation">2x + 1 = 9</div>
-    <div class="box-row">
-        <div class="box" data-answer="-"></div>
-        <div class="box" data-answer="1"></div>
-        <div class="box-space"></div>
-        <div class="box" data-answer="-"></div>
-        <div class="box" data-answer="1"></div>
+    <div class="box-container">
+        <div class="box light-blue" id="box1-1" ondrop="drop(event, 1, 1)" ondragover="allowDrop(event)"></div>
+        <div class="box blue" id="box1-2" ondrop="drop(event, 1, 2)" ondragover="allowDrop(event)"></div>
+        <div class="box light-blue" id="box1-3" ondrop="drop(event, 1, 3)" ondragover="allowDrop(event)"></div>
+        <div class="box blue" id="box1-4" ondrop="drop(event, 1, 4)" ondragover="allowDrop(event)"></div>
     </div>
-    <div class="feedback hidden" id="feedback-row-1"></div>
+    <div class="feedback" id="feedback1"></div>
 
-    <div class="equation hidden" id="equation-2">2x = 8</div>
-    <div class="box-row hidden" id="row-2">
-        <div class="box" data-answer="÷"></div>
-        <div class="box" data-answer="2"></div>
-        <div class="box-space"></div>
-        <div class="box" data-answer="÷"></div>
-        <div class="box" data-answer="2"></div>
+    <div class="equation" id="equation2" style="display: none;">2x = 8</div>
+    <div class="box-container" id="row2" style="display: none;">
+        <div class="box light-blue" id="box2-1" ondrop="drop(event, 2, 1)" ondragover="allowDrop(event)"></div>
+        <div class="box blue" id="box2-2" ondrop="drop(event, 2, 2)" ondragover="allowDrop(event)"></div>
+        <div class="box light-blue" id="box2-3" ondrop="drop(event, 2, 3)" ondragover="allowDrop(event)"></div>
+        <div class="box blue" id="box2-4" ondrop="drop(event, 2, 4)" ondragover="allowDrop(event)"></div>
     </div>
-    <div class="feedback hidden" id="feedback-row-2"></div>
+    <div class="feedback" id="feedback2"></div>
 
-    <div class="equation hidden" id="equation-3">x = 4</div>
-    <div class="feedback hidden" id="final-feedback">Well done! You have solved the equation.</div>
+    <div class="equation" id="equation3" style="display: none;">x = 4</div>
+    <div class="feedback correct" id="finalFeedback" style="display: none;">Well done! You have solved the equation.</div>
 
-    <div class="draggables">
-        <div class="draggable" draggable="true">-</div>
-        <div class="draggable" draggable="true">+</div>
-        <div class="draggable" draggable="true">x</div>
-        <div class="draggable" draggable="true">÷</div>
-        <div class="draggable" draggable="true">1</div>
-        <div class="draggable" draggable="true">2</div>
-        <div class="draggable" draggable="true">3</div>
-        <div class="draggable" draggable="true">4</div>
-        <div class="draggable" draggable="true">5</div>
+    <div class="draggable-container">
+        <div class="draggable-column">
+            <div class="draggable symbol" draggable="true" ondragstart="drag(event)" id="minus">-</div>
+            <div class="draggable symbol" draggable="true" ondragstart="drag(event)" id="plus">+</div>
+            <div class="draggable symbol" draggable="true" ondragstart="drag(event)" id="times">x</div>
+            <div class="draggable symbol" draggable="true" ondragstart="drag(event)" id="divide">÷</div>
+        </div>
+        <div class="draggable-column">
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num1">1</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num2">2</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num3">3</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num4">4</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num5">5</div>
+        </div>
+        <div class="draggable-column">
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num6">6</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num7">7</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num8">8</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num9">9</div>
+            <div class="draggable" draggable="true" ondragstart="drag(event)" id="num10">10</div>
+        </div>
     </div>
 
     <script>
         let score = 0;
 
-        const draggables = document.querySelectorAll('.draggable');
-        const boxes = document.querySelectorAll('.box');
-        const feedbackRow1 = document.getElementById('feedback-row-1');
-        const feedbackRow2 = document.getElementById('feedback-row-2');
-        const equation2 = document.getElementById('equation-2');
-        const row2 = document.getElementById('row-2');
-        const equation3 = document.getElementById('equation-3');
-        const finalFeedback = document.getElementById('final-feedback');
-        const scoreDisplay = document.querySelector('.score');
+        function allowDrop(event) {
+            event.preventDefault();
+        }
 
-        let filledBoxesRow1 = { left: false, right: false };
-        let filledBoxesRow2 = { left: false, right: false };
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
 
-        draggables.forEach(draggable => {
-            draggable.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text', e.target.textContent);
-            });
-        });
+        function drop(event, row, position) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(data);
+            const box = event.target;
 
-        boxes.forEach((box, index) => {
-            box.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
+            if ((row === 1 && position % 2 !== 0 && data === "minus") ||
+                (row === 1 && position % 2 === 0 && data === "num1")) {
 
-            box.addEventListener('drop', (e) => {
-                const answer = e.dataTransfer.getData('text');
-                const expectedAnswer = box.getAttribute('data-answer');
-                const isLeftBox = index % 2 === 0;
-                const pairIndex = isLeftBox ? index + 2 : index - 2;
-
-                if (answer === expectedAnswer) {
-                    box.textContent = answer;
-                    boxes[pairIndex].textContent = answer;
-
-                    if (index < 4) {
-                        if (isLeftBox) filledBoxesRow1.left = true;
-                        else filledBoxesRow1.right = true;
-
-                        if (filledBoxesRow1.left && filledBoxesRow1.right) {
-                            feedbackRow1.textContent = 'Correct';
-                            feedbackRow1.classList.add('correct');
-                            feedbackRow1.classList.remove('hidden');
-                            setTimeout(() => {
-                                equation2.classList.remove('hidden');
-                                row2.classList.remove('hidden');
-                                score += 5;
-                                scoreDisplay.textContent = `Score = ${score}`;
-                            }, 1000);
-                        }
-                    } else {
-                        if (isLeftBox) filledBoxesRow2.left = true;
-                        else filledBoxesRow2.right = true;
-
-                        if (filledBoxesRow2.left && filledBoxesRow2.right) {
-                            feedbackRow2.textContent = 'Correct';
-                            feedbackRow2.classList.add('correct');
-                            feedbackRow2.classList.remove('hidden');
-                            setTimeout(() => {
-                                equation3.classList.remove('hidden');
-                                finalFeedback.classList.remove('hidden');
-                                score += 5;
-                                scoreDisplay.textContent = `Score = ${score}`;
-                            }, 1000);
-                        }
-                    }
+                if (position % 2 !== 0) {
+                    document.getElementById(`box1-1`).textContent = "-";
+                    document.getElementById(`box1-3`).textContent = "-";
                 } else {
-                    const feedback = index < 4 ? feedbackRow1 : feedbackRow2;
-                    feedback.textContent = 'Try again';
-                    feedback.classList.add('try-again');
-                    feedback.classList.remove('hidden');
+                    document.getElementById(`box1-2`).textContent = "1";
+                    document.getElementById(`box1-4`).textContent = "1";
                 }
-            });
-        });
+
+                if (document.getElementById("box1-1").textContent === "-" &&
+                    document.getElementById("box1-2").textContent === "1") {
+                    document.getElementById("feedback1").textContent = "Correct!";
+                    document.getElementById("feedback1").className = "feedback correct";
+                    setTimeout(() => {
+                        document.getElementById("equation2").style.display = "block";
+                        document.getElementById("row2").style.display = "flex";
+                        score = 5;
+                        document.querySelector(".score").textContent = `Score = ${score}`;
+                    }, 1000);
+                }
+            } else if ((row === 2 && position % 2 !== 0 && data === "divide") ||
+                (row === 2 && position % 2 === 0 && data === "num2")) {
+
+                if (position % 2 !== 0) {
+                    document.getElementById(`box2-1`).textContent = "÷";
+                    document.getElementById(`box2-3`).textContent = "÷";
+                } else {
+                    document.getElementById(`box2-2`).textContent = "2";
+                    document.getElementById(`box2-4`).textContent = "2";
+                }
+
+                if (document.getElementById("box2-1").textContent === "÷" &&
+                    document.getElementById("box2-2").textContent === "2") {
+                    document.getElementById("feedback2").textContent = "Correct!";
+                    document.getElementById("feedback2").className = "feedback correct";
+                    setTimeout(() => {
+                        document.getElementById("equation3").style.display = "block";
+                        document.getElementById("finalFeedback").style.display = "block";
+                        score = 10;
+                        document.querySelector(".score").textContent = `Score = ${score}`;
+                    }, 1000);
+                }
+            } else {
+                const feedback = document.getElementById(`feedback${row}`);
+                feedback.textContent = "Try again!";
+                feedback.className = "feedback wrong";
+            }
+        }
     </script>
 </body>
 </html>

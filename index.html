@@ -11,6 +11,11 @@
         }
         .equation {
             margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .equation p {
+            font-size: 32px;
         }
         .boxes {
             display: inline-flex;
@@ -39,6 +44,16 @@
         .hidden {
             visibility: hidden;
         }
+        .feedback {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
         .draggables {
             display: grid;
             grid-template-columns: repeat(3, auto);
@@ -61,7 +76,7 @@
             <div class="droppable" id="box1-copy"></div>
             <div class="droppable" id="box2-copy"></div>
         </div>
-        <p class="hidden" id="correct1">correct</p>
+        <p class="hidden feedback" id="feedback1"></p>
     </div>
 
     <div class="equation hidden" id="equation2">
@@ -74,12 +89,12 @@
             <div class="droppable" id="box3-copy"></div>
             <div class="droppable" id="box4-copy"></div>
         </div>
-        <p class="hidden" id="correct2">correct</p>
+        <p class="hidden feedback" id="feedback2"></p>
     </div>
 
     <div class="equation hidden" id="equation3">
         <p>x = 4</p>
-        <p class="hidden" id="correct3">correct</p>
+        <p class="hidden feedback" id="feedback3"></p>
     </div>
 
     <div class="draggables">
@@ -112,6 +127,13 @@
             box4: "2"
         };
 
+        const feedbackElements = {
+            box1: document.getElementById("feedback1"),
+            box2: document.getElementById("feedback1"),
+            box3: document.getElementById("feedback2"),
+            box4: document.getElementById("feedback2")
+        };
+
         const completed = {
             box1: false,
             box2: false,
@@ -135,25 +157,34 @@
                 const value = event.dataTransfer.getData("text");
                 const id = event.target.id;
 
+                const isPrimaryBox = id === "box1" || id === "box3";
+                const isSecondaryBox = id === "box2" || id === "box4";
+                const copyBoxId = isPrimaryBox ? id.replace("1", "1-copy").replace("3", "3-copy") : id.replace("2", "2-copy").replace("4", "4-copy");
+
                 if (correctAnswers[id] === value) {
                     event.target.textContent = value;
+                    document.getElementById(copyBoxId).textContent = value;
                     completed[id] = true;
+                    feedbackElements[id].textContent = "correct";
+                    feedbackElements[id].classList.add("correct");
+                    feedbackElements[id].classList.remove("hidden");
 
-                    // Check if both inputs in a pair are completed
-                    if (completed.box1 && completed.box2) {
-                        document.getElementById("box1-copy").textContent = "-";
-                        document.getElementById("box2-copy").textContent = "1";
-                        document.getElementById("correct1").classList.remove("hidden");
-                        document.getElementById("equation2").classList.remove("hidden");
-                    }
+                    setTimeout(() => {
+                        if (completed.box1 && completed.box2) {
+                            document.getElementById("equation2").classList.remove("hidden");
+                        }
 
-                    if (completed.box3 && completed.box4) {
-                        document.getElementById("box3-copy").textContent = "÷";
-                        document.getElementById("box4-copy").textContent = "2";
-                        document.getElementById("correct2").classList.remove("hidden");
-                        document.getElementById("equation3").classList.remove("hidden");
-                        document.getElementById("correct3").classList.remove("hidden");
-                    }
+                        if (completed.box3 && completed.box4) {
+                            document.getElementById("equation3").classList.remove("hidden");
+                            document.getElementById("feedback3").textContent = "correct";
+                            document.getElementById("feedback3").classList.add("correct");
+                            document.getElementById("feedback3").classList.remove("hidden");
+                        }
+                    }, 1000);
+                } else {
+                    feedbackElements[id].textContent = "try again";
+                    feedbackElements[id].classList.add("incorrect");
+                    feedbackElements[id].classList.remove("hidden");
                 }
             });
         });

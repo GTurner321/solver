@@ -3,218 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop Equations</title>
+    <title>Equation Solver</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
         }
+
         .equation {
-            margin: 40px 0;
-            font-size: 36px;
-            font-weight: bold;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .boxes {
             display: flex;
             justify-content: center;
-            align-items: center;
-            white-space: pre;
+            margin: 10px 0;
         }
-        .equation p {
-            margin: 0 10px;
-            font-size: 48px;
-        }
-        .boxes-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .space {
-            width: 40px;
-        }
-        .draggable {
-            width: 40px;
-            height: 40px;
+
+        .box {
+            width: 50px;
+            height: 50px;
             border: 1px solid black;
-            display: inline-flex;
-            align-items: center;
+            margin: 0 5px;
+            display: flex;
             justify-content: center;
-            cursor: grab;
-            margin: 5px;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .spacer {
+            width: 50px; /* Match the size of the box */
+        }
+
+        .draggable {
             background-color: blue;
             color: white;
-        }
-        .droppable {
-            width: 40px;
-            height: 40px;
-            border: 2px dashed gray;
+            width: 50px;
+            height: 50px;
+            margin: 5px;
             display: inline-flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            cursor: grab;
         }
+
         .hidden {
             visibility: hidden;
         }
+
         .feedback {
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 18px;
         }
+
         .correct {
             color: green;
         }
-        .incorrect {
+
+        .try-again {
             color: red;
         }
-        .final-feedback {
-            font-size: 20px;
-            margin-top: 20px;
-            color: green;
+
+        .draggable-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
-        .draggables {
-            display: grid;
-            grid-template-columns: repeat(3, auto);
-            gap: 10px;
-            justify-content: end;
-            position: absolute;
-            right: 10px;
-            top: 50px;
+
+        .draggable-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="equation">
-        <p> 2x + 1  </p>
-        <p>=</p>
-        <p>  9</p>
-    </div>
-    <div class="boxes-row">
-        <div class="droppable" id="box1"></div>
-        <div class="droppable" id="box2"></div>
-        <div class="space"></div>
-        <div class="droppable" id="box1-copy"></div>
-        <div class="droppable" id="box2-copy"></div>
-    </div>
-    <p class="hidden feedback" id="feedback1"></p>
 
-    <div class="equation hidden" id="equation2">
-        <p>   2x   </p>
-        <p>=</p>
-        <p>   8</p>
+    <div class="equation">2x + 1 = 9</div>
+    <div class="boxes">
+        <div class="box" data-box="minus"></div>
+        <div class="box" data-box="one"></div>
+        <div class="spacer"></div>
+        <div class="box" data-box="minus"></div>
+        <div class="box" data-box="one"></div>
     </div>
-    <div class="boxes-row">
-        <div class="droppable" id="box3"></div>
-        <div class="droppable" id="box4"></div>
-        <div class="space"></div>
-        <div class="droppable" id="box3-copy"></div>
-        <div class="droppable" id="box4-copy"></div>
+    <div class="feedback hidden" id="feedback-1"></div>
+
+    <div class="equation hidden" id="equation-2">2x = 8</div>
+    <div class="boxes hidden" id="boxes-2">
+        <div class="box" data-box="divide"></div>
+        <div class="box" data-box="two"></div>
+        <div class="spacer"></div>
+        <div class="box" data-box="divide"></div>
+        <div class="box" data-box="two"></div>
     </div>
-    <p class="hidden feedback" id="feedback2"></p>
+    <div class="feedback hidden" id="feedback-2"></div>
 
-    <div class="equation hidden" id="equation3">
-        <p>   x   </p>
-        <p>=</p>
-        <p>   4</p>
-    </div>
-    <p class="hidden final-feedback" id="feedback3">Well done! You have solved the equation.</p>
+    <div class="equation hidden" id="equation-3">x = 4</div>
+    <div class="feedback hidden" id="final-feedback">Well done! You have solved the equation.</div>
 
-    <div class="draggables">
-        <div class="draggable" draggable="true" data-value="+">+</div>
-        <div class="draggable" draggable="true" data-value="-">-</div>
-        <div class="draggable" draggable="true" data-value="x">x</div>
-        <div class="draggable" draggable="true" data-value="÷">÷</div>
-
-        <div class="draggable" draggable="true" data-value="1">1</div>
-        <div class="draggable" draggable="true" data-value="2">2</div>
-        <div class="draggable" draggable="true" data-value="3">3</div>
-        <div class="draggable" draggable="true" data-value="4">4</div>
-        <div class="draggable" draggable="true" data-value="5">5</div>
-
-        <div class="draggable" draggable="true" data-value="6">6</div>
-        <div class="draggable" draggable="true" data-value="7">7</div>
-        <div class="draggable" draggable="true" data-value="8">8</div>
-        <div class="draggable" draggable="true" data-value="9">9</div>
-        <div class="draggable" draggable="true" data-value="10">10</div>
+    <div class="draggable-container">
+        <div class="draggable-column">
+            <div class="draggable" draggable="true" data-value="-">-</div>
+            <div class="draggable" draggable="true" data-value="+">+</div>
+            <div class="draggable" draggable="true" data-value="x">x</div>
+            <div class="draggable" draggable="true" data-value="\u00F7">&divide;</div>
+        </div>
+        <div class="draggable-column">
+            <div class="draggable" draggable="true" data-value="1">1</div>
+            <div class="draggable" draggable="true" data-value="2">2</div>
+            <div class="draggable" draggable="true" data-value="3">3</div>
+            <div class="draggable" draggable="true" data-value="4">4</div>
+            <div class="draggable" draggable="true" data-value="5">5</div>
+        </div>
+        <div class="draggable-column">
+            <div class="draggable" draggable="true" data-value="6">6</div>
+            <div class="draggable" draggable="true" data-value="7">7</div>
+            <div class="draggable" draggable="true" data-value="8">8</div>
+            <div class="draggable" draggable="true" data-value="9">9</div>
+            <div class="draggable" draggable="true" data-value="10">10</div>
+        </div>
     </div>
 
     <script>
-        const droppables = document.querySelectorAll(".droppable");
-        const draggables = document.querySelectorAll(".draggable");
-        
-        const correctAnswers = {
-            box1: "-",
-            box2: "1",
-            box3: "÷",
-            box4: "2"
-        };
+        const draggables = document.querySelectorAll('.draggable');
+        const boxes = document.querySelectorAll('.box');
+        const feedback1 = document.getElementById('feedback-1');
+        const feedback2 = document.getElementById('feedback-2');
+        const equation2 = document.getElementById('equation-2');
+        const equation3 = document.getElementById('equation-3');
+        const boxes2 = document.getElementById('boxes-2');
+        const finalFeedback = document.getElementById('final-feedback');
 
-        const feedbackElements = {
-            box1: document.getElementById("feedback1"),
-            box2: document.getElementById("feedback1"),
-            box3: document.getElementById("feedback2"),
-            box4: document.getElementById("feedback2")
-        };
-
-        const completed = {
-            box1: false,
-            box2: false,
-            box3: false,
-            box4: false
-        };
+        let firstRowCorrect = { minus: false, one: false };
+        let secondRowCorrect = { divide: false, two: false };
 
         draggables.forEach(draggable => {
-            draggable.addEventListener("dragstart", event => {
-                event.dataTransfer.setData("text", event.target.dataset.value);
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+            });
+
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
             });
         });
 
-        droppables.forEach(droppable => {
-            droppable.addEventListener("dragover", event => {
-                event.preventDefault();
-            });
+        boxes.forEach(box => {
+            box.addEventListener('dragover', e => {
+                e.preventDefault();
+                const dragging = document.querySelector('.dragging');
+                const value = dragging.dataset.value;
+                const boxType = box.dataset.box;
 
-            droppable.addEventListener("drop", event => {
-                event.preventDefault();
-                const value = event.dataTransfer.getData("text");
-                const id = event.target.id;
+                if ((boxType === 'minus' && value === '-') || (boxType === 'one' && value === '1')) {
+                    box.textContent = value;
+                    box.classList.add('filled');
+                    firstRowCorrect[boxType] = true;
 
-                const isPrimaryBox = id === "box1" || id === "box1-copy" || id === "box3" || id === "box3-copy";
-                const isSecondaryBox = id === "box2" || id === "box2-copy" || id === "box4" || id === "box4-copy";
-                const primaryPair = ["box1", "box1-copy"];
-                const secondaryPair = ["box2", "box2-copy"];
-                const primaryPair2 = ["box3", "box3-copy"];
-                const secondaryPair2 = ["box4", "box4-copy"];
-
-                if (correctAnswers[id] === value || (isPrimaryBox && correctAnswers[primaryPair[0]] === value) || (isPrimaryBox && correctAnswers[primaryPair2[0]] === value)) {
-                    const pair = isPrimaryBox ? (id.includes("box3") ? primaryPair2 : primaryPair) : (id.includes("box4") ? secondaryPair2 : secondaryPair);
-
-                    pair.forEach(boxId => {
-                        document.getElementById(boxId).textContent = value;
-                        completed[boxId] = true;
-                    });
-                
-                    if (Object.values(completed).slice(0, 2).every(Boolean)) {
-                        feedbackElements["box1"].textContent = "correct";
-                        feedbackElements["box1"].classList.add("correct");
-                        feedbackElements["box1"].classList.remove("hidden");
-
-                        setTimeout(() => {
-                            document.getElementById("equation2").classList.remove("hidden");
-                        }, 1000);
+                    // Automatically fill other boxes in the row
+                    if (boxType === 'minus') {
+                        document.querySelectorAll('[data-box="minus"]').forEach(b => b.textContent = '-');
+                    } else if (boxType === 'one') {
+                        document.querySelectorAll('[data-box="one"]').forEach(b => b.textContent = '1');
                     }
 
-                    if (Object.values(completed).slice(2).every(Boolean)) {
-                        feedbackElements["box3"].textContent = "correct";
-                        feedbackElements["box3"].classList.add("correct");
-                        feedbackElements["box3"].classList.remove("hidden");
-
+                    // Check if both conditions are met
+                    if (firstRowCorrect.minus && firstRowCorrect.one) {
+                        feedback1.textContent = 'Correct';
+                        feedback1.className = 'feedback correct';
                         setTimeout(() => {
-                            document.getElementById("equation3").classList.remove("hidden");
-                            document.getElementById("feedback3").classList.remove("hidden");
+                            equation2.classList.remove('hidden');
+                            boxes2.classList.remove('hidden');
+                        }, 1000);
+                    }
+                } else if ((boxType === 'divide' && value === '÷') || (boxType === 'two' && value === '2')) {
+                    box.textContent = value;
+                    box.classList.add('filled');
+                    secondRowCorrect[boxType] = true;
+
+                    // Automatically fill other boxes in the row
+                    if (boxType === 'divide') {
+                        document.querySelectorAll('[data-box="divide"]').forEach(b => b.textContent = '÷');
+                    } else if (boxType === 'two') {
+                        document.querySelectorAll('[data-box="two"]').forEach(b => b.textContent = '2');
+                    }
+
+                    // Check if both conditions are met
+                    if (secondRowCorrect.divide && secondRowCorrect.two) {
+                        feedback2.textContent = 'Correct';
+                        feedback2.className = 'feedback correct';
+                        setTimeout(() => {
+                            equation3.classList.remove('hidden');
+                            finalFeedback.classList.remove('hidden');
                         }, 1000);
                     }
                 } else {
-                    feedbackElements[id].textContent = "try again";
-                    feedbackElements[id].classList.add("incorrect");
-                    feedbackElements[id].classList.remove("hidden");
+                    if (!box.classList.contains('filled')) {
+                        feedback1.textContent = 'Try again';
+                        feedback1.className = 'feedback try-again';
+                    }
                 }
             });
         });

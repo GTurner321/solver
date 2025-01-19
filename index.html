@@ -7,30 +7,32 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
-            align-items: flex-start;
-            margin: 20px;
         }
 
-        .equation-container {
+        .main-container {
             flex: 1;
-            max-width: 60%;
+            text-align: center;
         }
 
         .draggable-container {
-            flex: 0 0 200px;
+            width: 200px;
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            position: relative;
         }
 
         .score-box {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             background-color: yellow;
             padding: 10px;
             border: 1px solid black;
-            margin-bottom: 20px;
             font-size: 18px;
             text-align: center;
         }
@@ -56,9 +58,13 @@
             color: white;
         }
 
+        .equation-container {
+            margin: 20px 0;
+        }
+
         .drop-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             margin: 20px 0;
             gap: 10px;
         }
@@ -97,10 +103,10 @@
     </style>
 </head>
 <body>
-    <div class="equation-container">
-        <div class="score-box" id="score">Score = 0</div>
+    <div class="score-box" id="score">Score = 0</div>
 
-        <div>
+    <div class="main-container">
+        <div class="equation-container" id="equation-1-container">
             <p id="equation-1">2x + 1 = 9</p>
             <div class="drop-container">
                 <div class="drop-box symbol" data-pair="symbol-1"></div>
@@ -112,7 +118,7 @@
             <div class="message" id="message-1"></div>
         </div>
 
-        <div>
+        <div class="equation-container" id="equation-2-container">
             <p id="equation-2">2x = 8</p>
             <div class="drop-container">
                 <div class="drop-box symbol" data-pair="symbol-2"></div>
@@ -122,6 +128,11 @@
                 <div class="drop-box number" data-pair="number-2"></div>
             </div>
             <div class="message" id="message-2"></div>
+        </div>
+
+        <div class="equation-container" id="equation-3-container" style="display: none;">
+            <p id="equation-3">x = 4</p>
+            <div class="message" id="final-message" style="margin-top: 20px; font-size: 20px;"></div>
         </div>
     </div>
 
@@ -145,11 +156,6 @@
     <script>
         let score = 0;
         const scoreElement = document.getElementById("score");
-        const messageElements = {
-            "message-1": document.getElementById("message-1"),
-            "message-2": document.getElementById("message-2"),
-        };
-
         const correctAnswers = {
             "symbol-1": "-",
             "number-1": "1",
@@ -175,28 +181,29 @@
 
                 if (correctAnswers[pair] === droppedValue) {
                     box.textContent = droppedValue;
-
-                    // Auto-fill corresponding boxes
                     document.querySelectorAll(`.drop-box[data-pair='${pair}']`).forEach(b => {
                         b.textContent = droppedValue;
                     });
 
-                    // Check if row is complete
-                    const allFilled = [...document.querySelectorAll(`.drop-box[data-pair='${pair}']`)].every(b => b.textContent.trim() !== "");
+                    const allFilled = [...document.querySelectorAll(`.drop-box[data-pair^='${pair.split("-")[0]}']`)].every(b => b.textContent.trim() !== "");
 
                     if (allFilled) {
-                        messageElements[`message-${pair.split("-")[1]}`].textContent = "Correct!";
-                        messageElements[`message-${pair.split("-")[1]}`].classList.add("correct");
+                        document.getElementById(`message-${pair.split("-")[1]}`).textContent = "Correct!";
+                        document.getElementById(`message-${pair.split("-")[1]}`).classList.add("correct");
 
-                        // Update score
                         if (score === 0 || score === 5) {
                             score += 5;
                             scoreElement.textContent = `Score = ${score}`;
                         }
+
+                        if (pair === "number-2" && score === 10) {
+                            document.getElementById("equation-3-container").style.display = "block";
+                            document.getElementById("final-message").textContent = "Well done! You have solved the equation.";
+                        }
                     }
                 } else {
-                    messageElements[`message-${pair.split("-")[1]}`].textContent = "Try again!";
-                    messageElements[`message-${pair.split("-")[1]}`].classList.add("try-again");
+                    document.getElementById(`message-${pair.split("-")[1]}`).textContent = "Try again!";
+                    document.getElementById(`message-${pair.split("-")[1]}`).classList.add("try-again");
                 }
             });
         });

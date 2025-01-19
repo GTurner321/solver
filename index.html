@@ -16,15 +16,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            white-space: pre;
         }
         .equation p {
             margin: 0 10px;
             font-size: 48px;
         }
-        .boxes {
-            display: inline-flex;
+        .boxes-row {
+            display: flex;
+            justify-content: center;
             gap: 10px;
             margin-top: 20px;
+        }
+        .space {
+            width: 40px;
         }
         .draggable {
             width: 40px;
@@ -73,48 +78,41 @@
             right: 10px;
             top: 50px;
         }
-        .space {
-            height: 40px;
-        }
     </style>
 </head>
 <body>
     <div class="equation">
-        <p>2x + 1</p>
+        <p> 2x + 1  </p>
         <p>=</p>
-        <p>9</p>
+        <p>  9</p>
     </div>
-    <div class="boxes">
+    <div class="boxes-row">
         <div class="droppable" id="box1"></div>
         <div class="droppable" id="box2"></div>
-    </div>
-    <div class="space"></div>
-    <div class="boxes">
+        <div class="space"></div>
         <div class="droppable" id="box1-copy"></div>
         <div class="droppable" id="box2-copy"></div>
     </div>
     <p class="hidden feedback" id="feedback1"></p>
 
     <div class="equation hidden" id="equation2">
-        <p>2x</p>
+        <p>   2x   </p>
         <p>=</p>
-        <p>8</p>
+        <p>   8</p>
     </div>
-    <div class="boxes">
+    <div class="boxes-row">
         <div class="droppable" id="box3"></div>
         <div class="droppable" id="box4"></div>
-    </div>
-    <div class="space"></div>
-    <div class="boxes">
+        <div class="space"></div>
         <div class="droppable" id="box3-copy"></div>
         <div class="droppable" id="box4-copy"></div>
     </div>
     <p class="hidden feedback" id="feedback2"></p>
 
     <div class="equation hidden" id="equation3">
-        <p>x</p>
+        <p>   x   </p>
         <p>=</p>
-        <p>4</p>
+        <p>   4</p>
     </div>
     <p class="hidden final-feedback" id="feedback3">Well done! You have solved the equation.</p>
 

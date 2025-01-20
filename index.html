@@ -12,6 +12,7 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            background-color: lightgreen;
         }
 
         .main-container {
@@ -62,6 +63,10 @@
             margin: 20px 0;
         }
 
+        .equation-container p {
+            font-size: 24px;
+        }
+
         .drop-container {
             display: flex;
             justify-content: center;
@@ -99,6 +104,10 @@
 
         .message.try-again {
             color: red;
+        }
+
+        #final-message {
+            color: green;
         }
     </style>
 </head>
@@ -138,18 +147,19 @@
 
     <div class="draggable-container">
         <div class="draggable symbol" draggable="true">-</div>
-        <div class="draggable symbol" draggable="true">+</div>
-        <div class="draggable symbol" draggable="true">x</div>
-        <div class="draggable symbol" draggable="true">÷</div>
         <div class="draggable number" draggable="true">1</div>
-        <div class="draggable number" draggable="true">2</div>
-        <div class="draggable number" draggable="true">3</div>
-        <div class="draggable number" draggable="true">4</div>
-        <div class="draggable number" draggable="true">5</div>
         <div class="draggable number" draggable="true">6</div>
+        <div class="draggable symbol" draggable="true">+</div>
+        <div class="draggable number" draggable="true">2</div>
         <div class="draggable number" draggable="true">7</div>
+        <div class="draggable symbol" draggable="true">x</div>
+        <div class="draggable number" draggable="true">3</div>
         <div class="draggable number" draggable="true">8</div>
+        <div class="draggable symbol" draggable="true">÷</div>
+        <div class="draggable number" draggable="true">4</div>
         <div class="draggable number" draggable="true">9</div>
+        <div style="visibility: hidden;"></div>
+        <div class="draggable number" draggable="true">5</div>
         <div class="draggable number" draggable="true">10</div>
     </div>
 
@@ -188,8 +198,9 @@
                     const allFilled = [...document.querySelectorAll(`.drop-box[data-pair^='${pair.split("-")[0]}']`)].every(b => b.textContent.trim() !== "");
 
                     if (allFilled) {
-                        document.getElementById(`message-${pair.split("-")[1]}`).textContent = "Correct!";
-                        document.getElementById(`message-${pair.split("-")[1]}`).classList.add("correct");
+                        const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                        message.textContent = "Correct!";
+                        message.classList.add("correct");
 
                         if (score === 0 || score === 5) {
                             score += 5;
@@ -202,8 +213,9 @@
                         }
                     }
                 } else {
-                    document.getElementById(`message-${pair.split("-")[1]}`).textContent = "Try again!";
-                    document.getElementById(`message-${pair.split("-")[1]}`).classList.add("try-again");
+                    const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                    message.textContent = "Try again!";
+                    message.classList.add("try-again");
                 }
             });
         });

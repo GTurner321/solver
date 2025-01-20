@@ -1,230 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Equation Solver</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            background-color: lightgreen;
-        }
+<script>
+    let score = 0;
+    const scoreElement = document.getElementById("score");
+    const correctAnswers = {
+        "symbol-1": "-",
+        "number-1": "1",
+        "symbol-2": "÷",
+        "number-2": "2",
+    };
 
-        .main-container {
-            flex: 1;
-            text-align: center;
-        }
+    function revealEquation2() {
+        document.getElementById("equation-2-container").style.display = "block";
+    }
 
-        .draggable-container {
-            width: 200px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
+    document.querySelectorAll(".draggable").forEach(draggable => {
+        draggable.addEventListener("dragstart", event => {
+            event.dataTransfer.setData("text", event.target.textContent);
+        });
+    });
 
-        .score-box {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background-color: yellow;
-            padding: 10px;
-            border: 1px solid black;
-            font-size: 18px;
-            text-align: center;
-        }
-
-        .draggable {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            border: 1px solid black;
-            cursor: grab;
-            user-select: none;
-        }
-
-        .draggable.symbol {
-            background-color: lightblue;
-        }
-
-        .draggable.number {
-            background-color: #4a90e2;
-            color: white;
-        }
-
-        .equation-container {
-            margin: 20px 0;
-        }
-
-        .equation-container p {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .drop-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            gap: 10px;
-        }
-
-        .drop-box {
-            width: 50px;
-            height: 50px;
-            border: 2px dashed black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-        }
-
-        .drop-box.symbol {
-            background-color: lightblue;
-        }
-
-        .drop-box.number {
-            background-color: #4a90e2;
-            color: white;
-        }
-
-        .message {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-
-        .message.correct {
-            color: green;
-        }
-
-        .message.try-again {
-            color: red;
-        }
-
-        #final-message {
-            color: green;
-        }
-    </style>
-</head>
-<body>
-    <div class="score-box" id="score">Score = 0</div>
-
-    <div class="main-container">
-        <div class="equation-container" id="equation-1-container">
-            <p id="equation-1">2x + 1 = 9</p>
-            <div class="drop-container">
-                <div class="drop-box symbol" data-pair="symbol-1"></div>
-                <div class="drop-box number" data-pair="number-1"></div>
-                <div style="width: 50px;"></div>
-                <div class="drop-box symbol" data-pair="symbol-1"></div>
-                <div class="drop-box number" data-pair="number-1"></div>
-            </div>
-            <div class="message" id="message-1"></div>
-        </div>
-
-        <div class="equation-container" id="equation-2-container" style="display: none;">
-            <p id="equation-2">2x = 8</p>
-            <div class="drop-container">
-                <div class="drop-box symbol" data-pair="symbol-2"></div>
-                <div class="drop-box number" data-pair="number-2"></div>
-                <div style="width: 50px;"></div>
-                <div class="drop-box symbol" data-pair="symbol-2"></div>
-                <div class="drop-box number" data-pair="number-2"></div>
-            </div>
-            <div class="message" id="message-2"></div>
-        </div>
-
-        <div class="equation-container" id="equation-3-container" style="display: none;">
-            <p id="equation-3">x = 4</p>
-            <div class="message" id="final-message" style="margin-top: 20px; font-size: 20px;"></div>
-        </div>
-    </div>
-
-    <div class="draggable-container">
-        <div class="draggable symbol" draggable="true">-</div>
-        <div class="draggable number" draggable="true">1</div>
-        <div class="draggable number" draggable="true">6</div>
-        <div class="draggable symbol" draggable="true">+</div>
-        <div class="draggable number" draggable="true">2</div>
-        <div class="draggable number" draggable="true">7</div>
-        <div class="draggable symbol" draggable="true">x</div>
-        <div class="draggable number" draggable="true">3</div>
-        <div class="draggable number" draggable="true">8</div>
-        <div class="draggable symbol" draggable="true">÷</div>
-        <div class="draggable number" draggable="true">4</div>
-        <div class="draggable number" draggable="true">9</div>
-        <div style="visibility: hidden;"></div>
-        <div class="draggable number" draggable="true">5</div>
-        <div class="draggable number" draggable="true">10</div>
-    </div>
-
-    <script>
-        let score = 0;
-        const scoreElement = document.getElementById("score");
-        const correctAnswers = {
-            "symbol-1": "-",
-            "number-1": "1",
-            "symbol-2": "÷",
-            "number-2": "2",
-        };
-
-        function revealEquation2() {
-            document.getElementById("equation-2-container").style.display = "block";
-        }
-
-        document.querySelectorAll(".draggable").forEach(draggable => {
-            draggable.addEventListener("dragstart", event => {
-                event.dataTransfer.setData("text", event.target.textContent);
-            });
+    document.querySelectorAll(".drop-box").forEach(box => {
+        box.addEventListener("dragover", event => {
+            event.preventDefault();
         });
 
-        document.querySelectorAll(".drop-box").forEach(box => {
-            box.addEventListener("dragover", event => {
-                event.preventDefault();
-            });
+        box.addEventListener("drop", event => {
+            event.preventDefault();
+            const droppedValue = event.dataTransfer.getData("text");
+            const pair = box.getAttribute("data-pair");
 
-            box.addEventListener("drop", event => {
-                event.preventDefault();
-                const droppedValue = event.dataTransfer.getData("text");
-                const pair = box.getAttribute("data-pair");
+            if (correctAnswers[pair] === droppedValue) {
+                box.textContent = droppedValue;
 
-                if (correctAnswers[pair] === droppedValue) {
-                    box.textContent = droppedValue;
-                    document.querySelectorAll(`.drop-box[data-pair='${pair}']`).forEach(b => {
-                        b.textContent = droppedValue;
-                    });
+                // Ensure all matching boxes get the correct value
+                document.querySelectorAll(`.drop-box[data-pair='${pair}']`).forEach(b => {
+                    b.textContent = droppedValue;
+                });
 
-                    const allFilled = [...document.querySelectorAll(`.drop-box[data-pair^='${pair.split("-")[0]}']`)].every(b => b.textContent.trim() !== "");
+                // Check if all boxes for this stage are filled
+                const stage = pair.split("-")[1]; // Extract stage (1 or 2)
+                const allBoxes = document.querySelectorAll(`.drop-box[data-pair^='symbol-${stage}'], .drop-box[data-pair^='number-${stage}']`);
+                const allFilled = [...allBoxes].every(b => b.textContent.trim() !== "");
 
-                    if (allFilled) {
-                        const message = document.getElementById(`message-${pair.split("-")[1]}`);
-                        message.textContent = "Correct!";
-                        message.classList.add("correct");
+                if (allFilled) {
+                    const message = document.getElementById(`message-${stage}`);
+                    message.textContent = "Correct!";
+                    message.classList.add("correct");
 
-                        if (score === 0) {
-                            score = 5;
-                            scoreElement.textContent = `Score = ${score}`;
-                            setTimeout(revealEquation2, 1000);
-                        } else if (score === 5) {
-                            score = 10;
-                            scoreElement.textContent = `Score = ${score}`;
-                            document.getElementById("equation-3-container").style.display = "block";
-                            document.getElementById("final-message").textContent = "Well done! You have solved the equation.";
-                        }
+                    if (score === 0) {
+                        // First stage complete
+                        score = 5;
+                        scoreElement.textContent = `Score = ${score}`;
+                        setTimeout(revealEquation2, 1000); // Reveal next stage
+                    } else if (score === 5) {
+                        // Second stage complete
+                        score = 10;
+                        scoreElement.textContent = `Score = ${score}`;
+                        document.getElementById("equation-3-container").style.display = "block";
+                        document.getElementById("final-message").textContent = "Well done! You have solved the equation.";
                     }
-                } else {
-                    const message = document.getElementById(`message-${pair.split("-")[1]}`);
-                    message.textContent = "Try again!";
-                    message.classList.add("try-again");
                 }
-            });
+            } else {
+                // Incorrect drop
+                const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                message.textContent = "Try again!";
+                message.classList.add("try-again");
+            }
         });
-    </script>
-</body>
-</html>
+    });
+</script>

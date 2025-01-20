@@ -64,7 +64,7 @@
         }
 
         .equation-container p {
-            font-size: 28px;
+            font-size: 36px; /* Increased font size */
             font-weight: bold;
         }
 
@@ -147,10 +147,10 @@
     </div>
 
     <div class="draggable-container">
-        <div class="draggable symbol" draggable="true">-</div>
+        <div class="draggable symbol" draggable="true">+</div>
         <div class="draggable number" draggable="true">1</div>
         <div class="draggable number" draggable="true">6</div>
-        <div class="draggable symbol" draggable="true">+</div>
+        <div class="draggable symbol" draggable="true">-</div>
         <div class="draggable number" draggable="true">2</div>
         <div class="draggable number" draggable="true">7</div>
         <div class="draggable symbol" draggable="true">x</div>
@@ -159,7 +159,6 @@
         <div class="draggable symbol" draggable="true">÷</div>
         <div class="draggable number" draggable="true">4</div>
         <div class="draggable number" draggable="true">9</div>
-        <div style="visibility: hidden;"></div>
         <div class="draggable number" draggable="true">5</div>
         <div class="draggable number" draggable="true">10</div>
     </div>
@@ -168,7 +167,7 @@
         let score = 0;
         const scoreElement = document.getElementById("score");
         const correctAnswers = {
-            "symbol-1": "-",
+            "symbol-1": "+",
             "number-1": "1",
             "symbol-2": "÷",
             "number-2": "2",
@@ -194,31 +193,28 @@
                 const droppedValue = event.dataTransfer.getData("text");
                 const pair = box.getAttribute("data-pair");
 
+                const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                message.textContent = ""; // Reset message
+
                 if (correctAnswers[pair] === droppedValue) {
                     box.textContent = droppedValue;
-
-                    // Ensure all matching boxes get the correct value
                     document.querySelectorAll(`.drop-box[data-pair='${pair}']`).forEach(b => {
                         b.textContent = droppedValue;
                     });
 
-                    // Check if all boxes for this stage are filled
-                    const stage = pair.split("-")[1]; // Extract stage (1 or 2)
+                    const stage = pair.split("-")[1];
                     const allBoxes = document.querySelectorAll(`.drop-box[data-pair^='symbol-${stage}'], .drop-box[data-pair^='number-${stage}']`);
                     const allFilled = [...allBoxes].every(b => b.textContent.trim() !== "");
 
                     if (allFilled) {
-                        const message = document.getElementById(`message-${stage}`);
                         message.textContent = "Correct!";
-                        message.classList.add("correct");
+                        message.className = "message correct";
 
                         if (score === 0) {
-                            // First stage complete
                             score = 5;
                             scoreElement.textContent = `Score = ${score}`;
-                            setTimeout(revealEquation2, 1000); // Reveal next stage
+                            setTimeout(revealEquation2, 1000);
                         } else if (score === 5) {
-                            // Second stage complete
                             score = 10;
                             scoreElement.textContent = `Score = ${score}`;
                             document.getElementById("equation-3-container").style.display = "block";
@@ -226,10 +222,8 @@
                         }
                     }
                 } else {
-                    // Incorrect drop
-                    const message = document.getElementById(`message-${pair.split("-")[1]}`);
                     message.textContent = "Try again!";
-                    message.classList.add("try-again");
+                    message.className = "message try-again";
                 }
             });
         });

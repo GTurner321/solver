@@ -59,8 +59,12 @@
             color: white;
         }
 
+        .equation-container {
+            margin: 20px 0;
+        }
+
         .equation-container p {
-            font-size: 32px; /* Larger font size for equations */
+            font-size: 28px;
             font-weight: bold;
         }
 
@@ -92,7 +96,7 @@
 
         .message {
             margin-top: 10px;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .message.correct {
@@ -144,23 +148,83 @@
 
     <div class="draggable-container">
         <div class="draggable symbol" draggable="true">-</div>
-        <div class="draggable symbol" draggable="true">+</div>
-        <div class="draggable symbol" draggable="true">x</div>
         <div class="draggable number" draggable="true">1</div>
-        <div class="draggable number" draggable="true">2</div>
-        <div class="draggable number" draggable="true">3</div>
-        <div class="draggable number" draggable="true">4</div>
-        <div class="draggable number" draggable="true">5</div>
         <div class="draggable number" draggable="true">6</div>
+        <div class="draggable symbol" draggable="true">+</div>
+        <div class="draggable number" draggable="true">2</div>
         <div class="draggable number" draggable="true">7</div>
+        <div class="draggable symbol" draggable="true">x</div>
+        <div class="draggable number" draggable="true">3</div>
         <div class="draggable number" draggable="true">8</div>
-        <div class="draggable number" draggable="true">9</div>
-        <div class="draggable number" draggable="true">10</div>
         <div class="draggable symbol" draggable="true">÷</div>
+        <div class="draggable number" draggable="true">4</div>
+        <div class="draggable number" draggable="true">9</div>
+        <div style="visibility: hidden;"></div>
+        <div class="draggable number" draggable="true">5</div>
+        <div class="draggable number" draggable="true">10</div>
     </div>
 
     <script>
-        // Script remains the same, ensuring functionality.
+        let score = 0;
+        const scoreElement = document.getElementById("score");
+        const correctAnswers = {
+            "symbol-1": "-",
+            "number-1": "1",
+            "symbol-2": "÷",
+            "number-2": "2",
+        };
+
+        function revealEquation2() {
+            document.getElementById("equation-2-container").style.display = "block";
+        }
+
+        document.querySelectorAll(".draggable").forEach(draggable => {
+            draggable.addEventListener("dragstart", event => {
+                event.dataTransfer.setData("text", event.target.textContent);
+            });
+        });
+
+        document.querySelectorAll(".drop-box").forEach(box => {
+            box.addEventListener("dragover", event => {
+                event.preventDefault();
+            });
+
+            box.addEventListener("drop", event => {
+                event.preventDefault();
+                const droppedValue = event.dataTransfer.getData("text");
+                const pair = box.getAttribute("data-pair");
+
+                if (correctAnswers[pair] === droppedValue) {
+                    box.textContent = droppedValue;
+                    document.querySelectorAll(`.drop-box[data-pair='${pair}']`).forEach(b => {
+                        b.textContent = droppedValue;
+                    });
+
+                    const allFilled = [...document.querySelectorAll(`.drop-box[data-pair^='${pair.split("-")[0]}']`)].every(b => b.textContent.trim() !== "");
+
+                    if (allFilled) {
+                        const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                        message.textContent = "Correct!";
+                        message.classList.add("correct");
+
+                        if (score === 0) {
+                            score = 5;
+                            scoreElement.textContent = `Score = ${score}`;
+                            setTimeout(revealEquation2, 1000);
+                        } else if (score === 5) {
+                            score = 10;
+                            scoreElement.textContent = `Score = ${score}`;
+                            document.getElementById("equation-3-container").style.display = "block";
+                            document.getElementById("final-message").textContent = "Well done! You have solved the equation.";
+                        }
+                    }
+                } else {
+                    const message = document.getElementById(`message-${pair.split("-")[1]}`);
+                    message.textContent = "Try again!";
+                    message.classList.add("try-again");
+                }
+            });
+        });
     </script>
 </body>
 </html>
